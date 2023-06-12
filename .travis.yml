@@ -1,0 +1,37 @@
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - echo "start creating an image with dockerfile"
+  - docker build -t madnix/react-test-app -f ./frontend/Dockerfile.dev ./frontend
+
+script:
+  - docker run -e CI=true madnix/react-test-app npm run test -- --coverage
+
+after_success:
+  - docker build -t madnix/docker-frontend ./frontend
+  - docker build -t madnix/docker-backend ./backend
+  - docker build -t madnix/docker-nginx ./nginx
+
+  # Login to docker CLI
+  - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+
+  - docker push madnix/docker-frontend
+  - docker push madnix/docker-backend
+  - docker push madnix/docker-nginx
+
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "ap-northeast-2"
+#   app: "docker-react-app"
+#   env: "Docker-react-app-env"
+#   bucket_name: "elasticbeanstalk-ap-northeast-2-679016144132"
+#   bucket_path: "docker-react-app"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   access_secret_key: $AWS_SECRET_ACCESS_KEY
