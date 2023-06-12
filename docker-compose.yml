@@ -1,0 +1,43 @@
+version: "3"
+services:
+  frontend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./frontend
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+    stdin_open: true
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "3000:80"
+
+  backend:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend
+    container_name: app_backend
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+  # AWS RDS에서는 해당 설정이 필요없음    
+  # mysql:
+  #   build: ./mysql
+  #   restart: unless-stopped
+  #   container_name: app_mysql
+  #   ports:
+  #     - "3306:3306"
+  #   volumes: #컨테이너가 삭제되도 DB 데이터 영속성을 위한 설정 
+  #            #(컨테이너가 호스트 파일을 참조하는 형식(즉 DB 데이터는 컨테이너가 아닌 로컬호스트에 생성))
+  #     - ./mysql/mysql_data:/var/lib/mysql
+  #     - ./mysql/sqls/:/docker-entrypoint-initdb.d/
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: madnix
+  #     MYSQL_DATABASE: myapp
+  #     MYSQL_USER: test
+  #     MYSQL_PASSWORD: test
