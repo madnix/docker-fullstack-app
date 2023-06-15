@@ -24,14 +24,14 @@ after_success:
   - docker push madnix/docker-backend
   - docker push madnix/docker-nginx
 
-# deploy:
-#   provider: elasticbeanstalk
-#   region: "ap-northeast-2"
-#   app: "docker-react-app"
-#   env: "Docker-react-app-env"
-#   bucket_name: "elasticbeanstalk-ap-northeast-2-679016144132"
-#   bucket_path: "docker-react-app"
-#   on:
-#     branch: master
-#   access_key_id: $AWS_ACCESS_KEY
-#   access_secret_key: $AWS_SECRET_ACCESS_KEY
+deploy:
+  provider: elasticbeanstalk
+  region: "ap-northeast-2"
+  app: "docker-fullstack-app"
+  env: "Docker-fullstack-app-env"
+  bucket_name: "elasticbeanstalk-ap-northeast-2-679016144132"
+  bucket_path: "docker-react-app"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  access_secret_key: $AWS_SECRET_ACCESS_KEY

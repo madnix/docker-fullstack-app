@@ -25,6 +25,12 @@ services:
     volumes:
       - /app/node_modules
       - ./backend:/app
+  environment:
+    MYSQL_HOST: mysql
+    MYSQL_USER: root
+    MYSQL_ROOT_PASSWORD: madnix09183859
+    MYSQL_DATABASE: myapp
+    MYSQL_PORT: 3306
   # AWS RDS에서는 해당 설정이 필요없음    
   # mysql:
   #   build: ./mysql

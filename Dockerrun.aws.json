@@ -1,0 +1,36 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+        {
+            "name": "frontend",
+            "image": "madnix/docker-frontend",
+            "hostname": "frontend",
+            "memory": 128,
+            "essential": false
+        },
+        {
+            "name": "backend",
+            "image": "madnix/docker-backend",
+            "hostname": "backend",
+            "memory": 128,
+            "essential": false
+        },
+        {
+            "name": "nginx",
+            "image": "madnix/docker-nginx",
+            "hostname": "nginx",
+            "memory": 128,
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "links": [
+                "frontend",
+                "backend"
+            ]
+        }
+    ]
+}
