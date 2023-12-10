@@ -1,6 +1,7 @@
 version: "3"
 services:
   frontend:
+    image: madnix/docker-frontend
     build:
       dockerfile: Dockerfile.dev
       context: ./frontend
@@ -11,6 +12,7 @@ services:
 
   nginx:
     restart: always
+    image: madnix/docker-nginx
     build:
       dockerfile: Dockerfile
       context: ./nginx
@@ -18,6 +20,7 @@ services:
       - "3000:80"
 
   backend:
+    image: madnix/docker-backend
     build:
       dockerfile: Dockerfile.dev
       context: ./backend
