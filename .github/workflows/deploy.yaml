@@ -1,0 +1,37 @@
+name: Deploy Fullstack App
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password=stdin
+      - run: docker build -t madnix/docker-fullstack-app -f ./frontend/Dockerfile.dev ./frontend
+      - run: docker run -e CI=true madnix/docker-fullstack-app npm test
+
+      - run: docker build -t madnix/docker-frontend ./frontend
+      - run: docker build -t madnix/docker-nginx ./nginx
+      - run: docker build -t madnix/docker-backend ./backend
+
+      - run: docker push madnix/docker-frontend
+      - run: docker push madnix/docker-nginx
+      - run: docker push madnix/docker-backend
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to EB
+        uses: madnx/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: docker-fullstack-app
+          environment_name: Docker-fullstack-app-env
+          existing_bucket_name: elasticbeanstalk-ap-northeast-2-679016144132
+          region: ap-northeast-2
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
